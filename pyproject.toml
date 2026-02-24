@@ -1,0 +1,59 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "rag-lab"
+version = "0.1.0"
+requires-python = ">=3.11"
+dependencies = [
+    # LangChain ecosystem
+    "langchain-core>=0.3",
+    "langchain-anthropic>=0.3",
+    "langchain-huggingface>=0.1",
+    "sentence-transformers>=5.2.2",
+    "langchain-chroma>=0.2",
+    "langgraph>=0.2",
+    "langsmith>=0.2",
+
+    # Document ingestion
+    "langchain-docling>=0.1",
+    "docling>=2.0",
+
+    # Vector store
+    "chromadb>=0.5",
+
+    # Config and environment
+    "pydantic-settings>=2.0",
+    "python-dotenv>=1.0",
+
+    # Backend
+    "fastapi>=0.115",
+    "uvicorn[standard]>=0.30",
+    "python_multipart>=0.0.21",
+
+    # UI and HTTP client
+    "streamlit>=1.40",
+    "httpx>=0.27",
+]
+
+[project.optional-dependencies]
+dev = [
+    "ruff>=0.6",
+    "pytest>=8.0",
+    "pytest-asyncio>=0.24",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.ruff]
+line-length = 88
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I"]  # pycodestyle errors, pyflakes, isort
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]

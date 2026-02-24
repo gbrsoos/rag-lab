@@ -1,0 +1,30 @@
+# Environment
+.env
+
+# Data (uploads and vector DB — can be large, contains user files)
+data/uploads/
+data/chroma/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+dist/
+build/
+
+# Virtual environments
+.venv/
+venv/
+
+# macOS
+.DS_Store
+
+# IDEs
+.idea/
+.vscode/
+
+# Misc
+CLAUDE.md
