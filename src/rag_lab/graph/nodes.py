@@ -129,14 +129,14 @@ def rewrite_query(state: GraphState) -> dict:
     Returns a plain string (no structured output) — we just need the new query.
     """
     context = _format_chunks(state.get("retrieved_chunks", []))
-    chain = _rewrite_prompt | _llm
-    result = chain.invoke(
+    prompt_value = _rewrite_prompt.invoke(
         {
             "query": state["query"],
             "attempt": state.get("retrieval_attempts", 1),
             "context": context,
         }
     )
+    result = _llm.invoke(prompt_value)
     return {
         "rewritten_query": result.content.strip(),
         "node_trace": ["rewrite_query"],
@@ -190,14 +190,15 @@ def verify_grounding(state: GraphState) -> dict:
         if i < len(chunks)
     ) or "(no chunks cited)"
 
-    chain = grounding_prompt | _llm.with_structured_output(GroundingOutput)
-    result: GroundingOutput = chain.invoke(
+    prompt_value = grounding_prompt.invoke(
         {
             "query": state["query"],
             "answer": state["answer"],
             "cited_context": cited_context,
         }
     )
+    structured_llm = _llm.with_structured_output(GroundingOutput)
+    result: GroundingOutput = structured_llm.invoke(prompt_value)
     return {
         "grounding_score": result.grounding_score,
         "grounding_pass": result.grounding_score >= settings.grounding_threshold,

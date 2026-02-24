@@ -1,14 +1,6 @@
 import logging
 from pathlib import Path
 
-from docling.chunking import HybridChunker
-from langchain_chroma import Chroma
-from langchain_community.vectorstores.utils import filter_complex_metadata
-from langchain_docling import DoclingLoader
-from langchain_docling.loader import ExportType
-from langchain_huggingface import HuggingFaceEmbeddings
-from transformers import AutoTokenizer
-
 from rag_lab.config import settings
 
 logger = logging.getLogger(__name__)
@@ -19,7 +11,7 @@ logger = logging.getLogger(__name__)
 _MAX_TOKENS = 256
 
 
-def get_embeddings() -> HuggingFaceEmbeddings:
+def get_embeddings():
     """Return the shared embedding model instance.
 
     HuggingFaceEmbeddings loads ~80 MB of model weights from disk (or
@@ -29,10 +21,12 @@ def get_embeddings() -> HuggingFaceEmbeddings:
     all-MiniLM-L6-v2 produces 384-dimensional vectors and runs entirely
     locally with no API key required.
     """
+    from langchain_huggingface import HuggingFaceEmbeddings
+
     return HuggingFaceEmbeddings(model_name=settings.embedding_model)
 
 
-def get_vector_store() -> Chroma:
+def get_vector_store():
     """Return a Chroma vector store connected to the local persist directory.
 
     All ingested documents share a single collection ("rag_lab") so that
@@ -44,6 +38,8 @@ def get_vector_store() -> Chroma:
     On the first call the directory is created; on subsequent calls the
     existing data is loaded. langchain-chroma handles this transparently.
     """
+    from langchain_chroma import Chroma
+
     settings.chroma_dir.mkdir(parents=True, exist_ok=True)
     return Chroma(
         collection_name="rag_lab",
@@ -127,3 +123,8 @@ def ingest_document(file_path: Path) -> dict[str, object]:
     vector_store.add_documents(docs)
 
     return {"filename": file_path.name, "chunk_count": len(docs)}
+    from docling.chunking import HybridChunker
+    from langchain_community.vectorstores.utils import filter_complex_metadata
+    from langchain_docling import DoclingLoader
+    from langchain_docling.loader import ExportType
+    from transformers import AutoTokenizer
